@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { BarChart3, MapPin, Users, TrendingUp } from "lucide-react";
+import { useAuthContext } from "@/components/AuthProvider";
+import { toast } from "sonner";
 
 interface LoginFormProps {
   onLogin: (userType: 'admin' | 'researcher') => void;
@@ -14,10 +16,33 @@ export const LoginForm = ({ onLogin }: LoginFormProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [userType, setUserType] = useState<'admin' | 'researcher'>('admin');
+  const [isLoading, setIsLoading] = useState(false);
+  const { signIn } = useAuthContext();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onLogin(userType);
+    handleLogin();
+  };
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      toast.error('Por favor, preencha todos os campos');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const { user } = await signIn(email, password);
+      if (user) {
+        toast.success('Login realizado com sucesso!');
+        // The auth context will handle the redirect
+      }
+    } catch (error: any) {
+      console.error('Login error:', error);
+      toast.error(error.message || 'Erro ao fazer login');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -145,8 +170,9 @@ export const LoginForm = ({ onLogin }: LoginFormProps) => {
                     className="w-full" 
                     variant="electoral"
                     size="lg"
+                    disabled={isLoading}
                   >
-                    Entrar no Sistema
+                    {isLoading ? 'Entrando...' : 'Entrar no Sistema'}
                   </Button>
                 </form>
                 

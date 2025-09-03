@@ -20,6 +20,9 @@ import { AutoSyncStatus } from "@/components/auto/AutoSyncStatus";
 import { AutoDistributionPanel } from "@/components/auto/AutoDistributionPanel";
 import { AutoAlertSystem } from "@/components/auto/AutoAlertSystem";
 import { useRealtimeUpdates } from "@/hooks/useRealtimeUpdates";
+import { useAuthContext } from "@/components/AuthProvider";
+import { Button } from "@/components/ui/button";
+import { LogOut } from "lucide-react";
 
 interface Research {
   id: string;
@@ -57,6 +60,7 @@ export const AdminDashboard = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedTab, setSelectedTab] = useState<'overview' | 'research' | 'researchers' | 'map' | 'automation'>('overview');
   const { data: realtimeData } = useRealtimeUpdates('demo-research');
+  const { profile, signOut } = useAuthContext();
 
   // Mock data
   const researches: Research[] = [
@@ -180,12 +184,20 @@ export const AdminDashboard = () => {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-foreground">Dashboard Administrativo</h1>
-              <p className="text-muted-foreground">Vote Scout Pro - Gestão de Pesquisas Eleitorais</p>
+              <p className="text-muted-foreground">
+                Olá, {profile?.full_name} - Vote Scout Pro
+              </p>
             </div>
-            <Button onClick={() => setShowCreateModal(true)} variant="electoral" size="lg">
-              <Plus className="h-4 w-4" />
-              Nova Pesquisa
-            </Button>
+            <div className="flex items-center space-x-3">
+              <Button onClick={() => setShowCreateModal(true)} variant="electoral" size="lg">
+                <Plus className="h-4 w-4" />
+                Nova Pesquisa
+              </Button>
+              <Button onClick={signOut} variant="outline" size="lg">
+                <LogOut className="h-4 w-4" />
+                Sair
+              </Button>
+            </div>
           </div>
         </div>
       </header>

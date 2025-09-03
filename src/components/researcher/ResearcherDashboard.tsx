@@ -15,6 +15,8 @@ import {
 } from "lucide-react";
 import { FieldMap } from "./FieldMap";
 import { InterviewForm } from "./InterviewForm";
+import { useAuthContext } from "@/components/AuthProvider";
+import { LogOut } from "lucide-react";
 
 interface AssignedResearch {
   id: string;
@@ -40,10 +42,10 @@ interface RegionQuota {
 export const ResearcherDashboard = () => {
   const [activeView, setActiveView] = useState<'dashboard' | 'map' | 'interview'>('dashboard');
   const [selectedResearch, setSelectedResearch] = useState<string>('');
+  const { profile, signOut } = useAuthContext();
 
-  // Mock data for researcher
-  const researcherName = "Maria Silva";
-  const researcherId = "researcher-001";
+  const researcherName = profile?.full_name || "Pesquisador";
+  const researcherId = profile?.user_id || "";
 
   const assignedResearches: AssignedResearch[] = [
     {
@@ -159,6 +161,10 @@ export const ResearcherDashboard = () => {
               >
                 <Target className="h-4 w-4" />
                 Nova Entrevista
+              </Button>
+              <Button onClick={signOut} variant="outline" size="sm">
+                <LogOut className="h-4 w-4" />
+                Sair
               </Button>
             </div>
           </div>
